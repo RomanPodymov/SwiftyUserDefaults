@@ -1,7 +1,7 @@
 //
 // SwiftyUserDefaults
 //
-// Copyright (c) 2015-present Radosław Pietruszewski, Łukasz Mróz
+// Copyright (c) 2021-present Roman Podymov
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ public protocol DataStorage: AnyObject {
     func data(forKey aKey: String) -> Data?
     func double(forKey: String) -> Double
     func dictionaryRepresentation() -> [String : Any]
+    func url(forKey: String) -> URL?
     
     func set(_: Any?, forKey: String)
     func set(_: Double, forKey: String)
@@ -46,5 +47,9 @@ extension UserDefaults: DataStorage { }
 extension NSUbiquitousKeyValueStore: DataStorage {
     public func dictionaryRepresentation() -> [String : Any] {
         return dictionaryRepresentation
+    }
+    
+    public func url(forKey: String) -> URL? {
+        nil
     }
 }

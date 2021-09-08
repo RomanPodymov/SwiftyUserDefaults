@@ -24,6 +24,49 @@
 
 import Foundation
 
+protocol StorageAdapter {
+    var storage: DataStorage { get }
+    // var keyStore: DefaultsKeyStore { get }
+    
+    /*public init(defaults: UserDefaults, keyStore: KeyStore) {
+        self.defaults = defaults
+        self.keyStore = keyStore
+    }
+
+    @available(*, unavailable)
+    public subscript(dynamicMember member: String) -> Never {
+        fatalError()
+    }*/
+
+    func hasKey<T: DefaultsSerializable>(_ key: DefaultsKey<T>) -> Bool
+    //func hasKey<T: DefaultsSerializable>(_ keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> Bool
+    func remove<T: DefaultsSerializable>(_ key: DefaultsKey<T>)
+    //func remove<T: DefaultsSerializable>(_ keyPath: KeyPath<KeyStore, DefaultsKey<T>>)
+    func removeAll()
+}
+
+extension StorageAdapter {
+    func hasKey<T: DefaultsSerializable>(_ key: DefaultsKey<T>) -> Bool {
+        return storage.hasKey(key)
+    }
+
+    /*func hasKey<T: DefaultsSerializable>(_ keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> Bool {
+        return defaults.hasKey(keyStore[keyPath: keyPath])
+    }*/
+
+    func remove<T: DefaultsSerializable>(_ key: DefaultsKey<T>) {
+        storage.remove(key)
+    }
+
+    /*func remove<T: DefaultsSerializable>(_ keyPath: KeyPath<KeyStore, DefaultsKey<T>>) {
+        defaults.remove(keyStore[keyPath: keyPath])
+    }*/
+
+    func removeAll() {
+        storage.removeAll()
+    }
+}
+
 /// A UserDefaults wrapper. It makes KeyPath dynamicMemberLookup  usable with UserDefaults in Swift 5.1 or greater.
 /// If Swift 5.0 or less, It works as ordinary SwiftyUserDefaults.
 ///
@@ -41,7 +84,35 @@ import Foundation
 /// Defaults.launchCount += 1
 /// ```
 @dynamicMemberLookup
-public struct DefaultsAdapter<KeyStore: DefaultsKeyStore> {
+public struct DefaultsAdapter<KeyStore: DefaultsKeyStore>: StorageAdapter {
+    public let defaults: UserDefaults
+    public let keyStore: KeyStore
+
+    public init(defaults: UserDefaults, keyStore: KeyStore) {
+        self.defaults = defaults
+        self.keyStore = keyStore
+    }
+
+    @available(*, unavailable)
+    public subscript(dynamicMember member: String) -> Never {
+        fatalError()
+    }
+
+    public func hasKey<T: DefaultsSerializable>(_ keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> Bool {
+        return defaults.hasKey(keyStore[keyPath: keyPath])
+    }
+
+    public func remove<T: DefaultsSerializable>(_ keyPath: KeyPath<KeyStore, DefaultsKey<T>>) {
+        defaults.remove(keyStore[keyPath: keyPath])
+    }
+    
+    var storage: DataStorage {
+        return defaults
+    }
+}
+
+@dynamicMemberLookup
+public struct iCloudAdapter<KeyStore: DefaultsKeyStore>: StorageAdapter {
 
     public let defaults: UserDefaults
     public let keyStore: KeyStore
@@ -60,19 +131,11 @@ public struct DefaultsAdapter<KeyStore: DefaultsKeyStore> {
         return defaults.hasKey(key)
     }
 
-    public func hasKey<T: DefaultsSerializable>(_ keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> Bool {
-        return defaults.hasKey(keyStore[keyPath: keyPath])
-    }
-
     public func remove<T: DefaultsSerializable>(_ key: DefaultsKey<T>) {
         defaults.remove(key)
     }
-
-    public func remove<T: DefaultsSerializable>(_ keyPath: KeyPath<KeyStore, DefaultsKey<T>>) {
-        defaults.remove(keyStore[keyPath: keyPath])
-    }
-
-    public func removeAll() {
-        defaults.removeAll()
+    
+    var storage: DataStorage {
+        return defaults
     }
 }

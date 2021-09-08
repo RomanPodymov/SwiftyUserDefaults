@@ -33,8 +33,9 @@ import Foundation
 ///  ~~~
 
 public var Defaults = DefaultsAdapter<DefaultsKeys>(defaults: .standard, keyStore: .init())
+public var iCloudStorage = iCloudAdapter<DefaultsKeys>(defaults: .standard, keyStore: .init())
 
-public extension UserDefaults {
+public extension DataStorage {
 
     /// Returns `true` if `key` exists
     func hasKey<T>(_ key: DefaultsKey<T>) -> Bool {
@@ -57,7 +58,7 @@ public extension UserDefaults {
     }
 }
 
-internal extension UserDefaults {
+internal extension DataStorage {
 
     func number(forKey key: String) -> NSNumber? {
         return object(forKey: key) as? NSNumber

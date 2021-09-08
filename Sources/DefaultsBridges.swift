@@ -30,11 +30,11 @@ public protocol DefaultsBridge {
 
     /// This method provides a way of saving your data in UserDefaults. Usually needed
     /// when you want to create your custom Bridge, so you'll have to override it.
-    func get(key: String, userDefaults: UserDefaults) -> T?
+    func get(key: String, userDefaults: DataStorage) -> T?
 
     /// This method provides a way of saving your data in UserDefaults. Usually needed
     /// when you want to create your custom Bridge, so you'll have to override it.
-    func save(key: String, value: T?, userDefaults: UserDefaults)
+    func save(key: String, value: T?, userDefaults: DataStorage)
 
     /// Override this function if your data is represented differently in UserDefaults
     /// and you map it in save/get methods.
@@ -52,11 +52,11 @@ public struct DefaultsObjectBridge<T>: DefaultsBridge {
 
     public init() {}
 
-    public func save(key: String, value: T?, userDefaults: UserDefaults) {
+    public func save(key: String, value: T?, userDefaults: DataStorage) {
         userDefaults.set(value, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> T? {
+    public func get(key: String, userDefaults: DataStorage) -> T? {
         return userDefaults.object(forKey: key) as? T
     }
 
@@ -69,11 +69,11 @@ public struct DefaultsArrayBridge<T: Collection>: DefaultsBridge {
 
     public init() {}
 
-    public func save(key: String, value: T?, userDefaults: UserDefaults) {
+    public func save(key: String, value: T?, userDefaults: DataStorage) {
         userDefaults.set(value, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> T? {
+    public func get(key: String, userDefaults: DataStorage) -> T? {
         return userDefaults.array(forKey: key) as? T
     }
 
@@ -86,11 +86,11 @@ public struct DefaultsStringBridge: DefaultsBridge {
 
     public init() {}
 
-    public func save(key: String, value: String?, userDefaults: UserDefaults) {
+    public func save(key: String, value: String?, userDefaults: DataStorage) {
         userDefaults.set(value, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> String? {
+    public func get(key: String, userDefaults: DataStorage) -> String? {
         return userDefaults.string(forKey: key)
     }
 
@@ -103,11 +103,11 @@ public struct DefaultsIntBridge: DefaultsBridge {
 
     public init() {}
 
-    public func save(key: String, value: Int?, userDefaults: UserDefaults) {
+    public func save(key: String, value: Int?, userDefaults: DataStorage) {
         userDefaults.set(value, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> Int? {
+    public func get(key: String, userDefaults: DataStorage) -> Int? {
         if let int = userDefaults.number(forKey: key)?.intValue {
             return int
         }
@@ -130,11 +130,11 @@ public struct DefaultsDoubleBridge: DefaultsBridge {
 
     public init() {}
 
-    public func save(key: String, value: Double?, userDefaults: UserDefaults) {
+    public func save(key: String, value: Double?, userDefaults: DataStorage) {
         userDefaults.set(value, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> Double? {
+    public func get(key: String, userDefaults: DataStorage) -> Double? {
         if let double = userDefaults.number(forKey: key)?.doubleValue {
             return double
         }
@@ -157,11 +157,11 @@ public struct DefaultsBoolBridge: DefaultsBridge {
 
     public init() {}
 
-    public func save(key: String, value: Bool?, userDefaults: UserDefaults) {
+    public func save(key: String, value: Bool?, userDefaults: DataStorage) {
         userDefaults.set(value, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> Bool? {
+    public func get(key: String, userDefaults: DataStorage) -> Bool? {
         // @warning we use number(forKey:) instead of bool(forKey:), because
         // bool(forKey:) will always return a value, even if it's not set
         //
@@ -184,11 +184,11 @@ public struct DefaultsDataBridge: DefaultsBridge {
 
     public init() {}
 
-    public func save(key: String, value: Data?, userDefaults: UserDefaults) {
+    public func save(key: String, value: Data?, userDefaults: DataStorage) {
         userDefaults.set(value, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> Data? {
+    public func get(key: String, userDefaults: DataStorage) -> Data? {
         return userDefaults.data(forKey: key)
     }
 
@@ -201,11 +201,11 @@ public struct DefaultsUrlBridge: DefaultsBridge {
 
     public init() {}
 
-    public func save(key: String, value: URL?, userDefaults: UserDefaults) {
+    public func save(key: String, value: URL?, userDefaults: DataStorage) {
         userDefaults.set(value, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> URL? {
+    public func get(key: String, userDefaults: DataStorage) -> URL? {
         return userDefaults.url(forKey: key)
     }
 
@@ -231,7 +231,7 @@ public struct DefaultsCodableBridge<T: Codable>: DefaultsBridge {
 
     public init() {}
 
-    public func save(key: String, value: T?, userDefaults: UserDefaults) {
+    public func save(key: String, value: T?, userDefaults: DataStorage) {
         guard let value = value else {
             userDefaults.removeObject(forKey: key)
             return
@@ -239,7 +239,7 @@ public struct DefaultsCodableBridge<T: Codable>: DefaultsBridge {
         userDefaults.set(encodable: value, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> T? {
+    public func get(key: String, userDefaults: DataStorage) -> T? {
         guard let data = userDefaults.data(forKey: key) else {
             return nil
         }
@@ -257,7 +257,7 @@ public struct DefaultsKeyedArchiverBridge<T>: DefaultsBridge {
 
     public init() {}
 
-    public func save(key: String, value: T?, userDefaults: UserDefaults) {
+    public func save(key: String, value: T?, userDefaults: DataStorage) {
         guard let value = value else {
             userDefaults.removeObject(forKey: key)
             return
@@ -270,7 +270,7 @@ public struct DefaultsKeyedArchiverBridge<T>: DefaultsBridge {
         }
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> T? {
+    public func get(key: String, userDefaults: DataStorage) -> T? {
         guard let data = userDefaults.data(forKey: key) else {
             return nil
         }
@@ -287,11 +287,11 @@ public struct DefaultsRawRepresentableBridge<T: RawRepresentable>: DefaultsBridg
 
     public init() {}
 
-    public func save(key: String, value: T?, userDefaults: UserDefaults) {
+    public func save(key: String, value: T?, userDefaults: DataStorage) {
         userDefaults.set(value?.rawValue, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> T? {
+    public func get(key: String, userDefaults: DataStorage) -> T? {
         guard let object = userDefaults.object(forKey: key) else { return nil }
         return deserialize(object)
     }
@@ -306,12 +306,12 @@ public struct DefaultsRawRepresentableArrayBridge<T: Collection>: DefaultsBridge
 
     public init() {}
 
-    public func save(key: String, value: T?, userDefaults: UserDefaults) {
+    public func save(key: String, value: T?, userDefaults: DataStorage) {
         let raw = value?.map { $0.rawValue }
         userDefaults.set(raw, forKey: key)
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> T? {
+    public func get(key: String, userDefaults: DataStorage) -> T? {
         guard let object = userDefaults.array(forKey: key) else { return nil }
         return deserialize(object)
     }
@@ -332,11 +332,11 @@ public struct DefaultsOptionalBridge<Bridge: DefaultsBridge>: DefaultsBridge {
         self.bridge = bridge
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> T? {
+    public func get(key: String, userDefaults: DataStorage) -> T? {
         return bridge.get(key: key, userDefaults: userDefaults)
     }
 
-    public func save(key: String, value: T?, userDefaults: UserDefaults) {
+    public func save(key: String, value: T?, userDefaults: DataStorage) {
         bridge.save(key: key, value: value as? Bridge.T, userDefaults: userDefaults)
     }
 
@@ -355,11 +355,11 @@ public struct DefaultsOptionalArrayBridge<Bridge: DefaultsBridge>: DefaultsBridg
         self.bridge = bridge
     }
 
-    public func get(key: String, userDefaults: UserDefaults) -> T? {
+    public func get(key: String, userDefaults: DataStorage) -> T? {
         return bridge.get(key: key, userDefaults: userDefaults)
     }
 
-    public func save(key: String, value: T?, userDefaults: UserDefaults) {
+    public func save(key: String, value: T?, userDefaults: DataStorage) {
         bridge.save(key: key, value: value as? Bridge.T, userDefaults: userDefaults)
     }
 

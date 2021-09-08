@@ -24,76 +24,66 @@
 
 import Foundation
 
-public protocol DefaultsProviding {
-    associatedtype KeyStore: DefaultsKeyStore
-    
-    subscript<T: DefaultsSerializable>(key key: DefaultsKey<T>) -> T.T where T: OptionalType, T.T == T { get nonmutating set }
-    subscript<T: DefaultsSerializable>(key key: DefaultsKey<T>) -> T.T where T.T == T { get nonmutating set }
-    subscript<T: DefaultsSerializable>(keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T: OptionalType, T.T == T { get nonmutating set }
-    subscript<T: DefaultsSerializable>(keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T.T == T { get nonmutating set }
-    subscript<T: DefaultsSerializable>(dynamicMember keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T: OptionalType, T.T == T { get nonmutating set }
-    subscript<T: DefaultsSerializable>(dynamicMember keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T.T == T { get nonmutating set }
-}
+public extension DefaultsAdapter {
 
-extension DefaultsAdapter: DefaultsProviding {
-    public subscript<T: DefaultsSerializable>(key key: DefaultsKey<T>) -> T.T where T: OptionalType, T.T == T {
+    subscript<T: DefaultsSerializable>(key key: DefaultsKey<T>) -> T.T where T: OptionalType, T.T == T {
         get {
             return defaults[key]
         }
-        nonmutating set {
+        set {
             defaults[key] = newValue
         }
     }
 
-    public subscript<T: DefaultsSerializable>(key key: DefaultsKey<T>) -> T.T where T.T == T {
+    subscript<T: DefaultsSerializable>(key key: DefaultsKey<T>) -> T.T where T.T == T {
         get {
             return defaults[key]
         }
-        nonmutating set {
+        set {
             defaults[key] = newValue
         }
     }
 
-    public subscript<T: DefaultsSerializable>(keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T: OptionalType, T.T == T {
+    subscript<T: DefaultsSerializable>(keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T: OptionalType, T.T == T {
         get {
             return defaults[keyStore[keyPath: keyPath]]
         }
-        nonmutating set {
+        set {
             defaults[keyStore[keyPath: keyPath]] = newValue
         }
     }
 
-    public subscript<T: DefaultsSerializable>(keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T.T == T {
+    subscript<T: DefaultsSerializable>(keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T.T == T {
         get {
             return defaults[keyStore[keyPath: keyPath]]
         }
-        nonmutating set {
+        set {
             defaults[keyStore[keyPath: keyPath]] = newValue
         }
     }
 
     // Weird flex, but needed these two for the dynamicMemberLookup :shrug:
 
-    public subscript<T: DefaultsSerializable>(dynamicMember keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T: OptionalType, T.T == T {
+    subscript<T: DefaultsSerializable>(dynamicMember keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T: OptionalType, T.T == T {
         get {
             return self[keyPath]
         }
-        nonmutating set {
+        set {
             self[keyPath] = newValue
         }
     }
 
-    public subscript<T: DefaultsSerializable>(dynamicMember keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T.T == T {
+    subscript<T: DefaultsSerializable>(dynamicMember keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> T.T where T.T == T {
         get {
             return self[keyPath]
         }
-        nonmutating set {
+        set {
             self[keyPath] = newValue
         }
     }
 }
 
-public extension UserDefaults {
+public extension DataStorage {
 
     subscript<T: DefaultsSerializable>(key: DefaultsKey<T>) -> T.T where T: OptionalType, T.T == T {
         get {
@@ -103,7 +93,7 @@ public extension UserDefaults {
             } else if let defaultValue = key.defaultValue {
                 return defaultValue
             } else {
-                return T.T.__swifty_empty
+                return T.T.empty
             }
         }
         set {

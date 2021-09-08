@@ -33,7 +33,7 @@ import Foundation
 ///  ~~~
 
 public var Defaults = DefaultsAdapter<DefaultsKeys>(defaults: .standard, keyStore: .init())
-public var iCloudStorage = iCloudAdapter<DefaultsKeys>(defaults: .standard, keyStore: .init())
+public var iCloudStorage = iCloudAdapter<DefaultsKeys>(dataStore: .default, keyStore: .init())
 
 public extension DataStorage {
 

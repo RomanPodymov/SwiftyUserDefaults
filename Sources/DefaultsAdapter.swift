@@ -113,12 +113,11 @@ public struct DefaultsAdapter<KeyStore: DefaultsKeyStore>: StorageAdapter {
 
 @dynamicMemberLookup
 public struct iCloudAdapter<KeyStore: DefaultsKeyStore>: StorageAdapter {
-
-    public let defaults: UserDefaults
+    public let dataStore: NSUbiquitousKeyValueStore
     public let keyStore: KeyStore
 
-    public init(defaults: UserDefaults, keyStore: KeyStore) {
-        self.defaults = defaults
+    public init(dataStore: NSUbiquitousKeyValueStore, keyStore: KeyStore) {
+        self.dataStore = dataStore
         self.keyStore = keyStore
     }
 
@@ -128,14 +127,14 @@ public struct iCloudAdapter<KeyStore: DefaultsKeyStore>: StorageAdapter {
     }
 
     public func hasKey<T: DefaultsSerializable>(_ key: DefaultsKey<T>) -> Bool {
-        return defaults.hasKey(key)
+        return dataStore.hasKey(key)
     }
 
     public func remove<T: DefaultsSerializable>(_ key: DefaultsKey<T>) {
-        defaults.remove(key)
+        dataStore.remove(key)
     }
     
     var storage: DataStorage {
-        return defaults
+        return dataStore
     }
 }

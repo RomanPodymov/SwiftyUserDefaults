@@ -32,8 +32,8 @@ import Foundation
 ///  var Defaults = DefaultsAdapter(defaults: UserDefaults(suiteName: "com.my.app")!, keyStore: DefaultsKeys())
 ///  ~~~
 
-public var Defaults = DefaultsAdapter<DefaultsKeys>(defaults: .standard, keyStore: .init())
-public var iCloudStorage = iCloudAdapter<DefaultsKeys>(dataStore: .default, keyStore: .init())
+public var Defaults = DefaultsAdapter<KeysStorage>(defaults: .standard, keyStore: .init())
+public var iCloudStorage = iCloudAdapter<KeysStorage>(dataStore: .default, keyStore: .init())
 
 public extension DataStorage {
 

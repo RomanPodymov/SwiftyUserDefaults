@@ -69,7 +69,7 @@ public final class SwiftyUserDefault<T: DefaultsSerializable> where T.T == T {
         }
     }
 
-    public init(keyPath: KeyPath<DefaultsKeys, DefaultsKey<T>>, options: SwiftyUserDefaultOptions = []) {
+    public init(keyPath: KeyPath<KeysStorage, DefaultsKey<T>>, options: SwiftyUserDefaultOptions = []) {
         self.key = Defaults.keyStore[keyPath: keyPath]
         self.options = options
 

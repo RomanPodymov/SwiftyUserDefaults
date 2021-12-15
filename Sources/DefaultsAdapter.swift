@@ -84,7 +84,7 @@ extension StorageAdapter {
 /// Defaults.launchCount += 1
 /// ```
 @dynamicMemberLookup
-public struct DefaultsAdapter<KeyStore: DefaultsKeyStore>: StorageAdapter {
+public struct DefaultsAdapter<KeyStore: KeysProvider>: StorageAdapter {
     public let defaults: UserDefaults
     public let keyStore: KeyStore
 
@@ -112,7 +112,7 @@ public struct DefaultsAdapter<KeyStore: DefaultsKeyStore>: StorageAdapter {
 }
 
 @dynamicMemberLookup
-public struct iCloudAdapter<KeyStore: DefaultsKeyStore>: StorageAdapter {
+public struct iCloudAdapter<KeyStore: KeysProvider>: StorageAdapter {
     public let dataStore: NSUbiquitousKeyValueStore
     public let keyStore: KeyStore
 
@@ -126,12 +126,12 @@ public struct iCloudAdapter<KeyStore: DefaultsKeyStore>: StorageAdapter {
         fatalError()
     }
 
-    public func hasKey<T: DefaultsSerializable>(_ key: DefaultsKey<T>) -> Bool {
-        return dataStore.hasKey(key)
+    public func hasKey<T: DefaultsSerializable>(_ keyPath: KeyPath<KeyStore, DefaultsKey<T>>) -> Bool {
+        return dataStore.hasKey(keyStore[keyPath: keyPath])
     }
 
-    public func remove<T: DefaultsSerializable>(_ key: DefaultsKey<T>) {
-        dataStore.remove(key)
+    public func remove<T: DefaultsSerializable>(_ keyPath: KeyPath<KeyStore, DefaultsKey<T>>) {
+        dataStore.remove(keyStore[keyPath: keyPath])
     }
     
     var storage: DataStorage {
